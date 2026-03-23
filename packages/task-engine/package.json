@@ -1,0 +1,11 @@
+{
+  "name": "@ops-hub/task-engine",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "echo build task-engine",
+    "dev": "echo dev task-engine",
+    "lint": "echo lint task-engine"
+  }
+}
