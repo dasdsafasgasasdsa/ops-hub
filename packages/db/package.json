@@ -1,0 +1,11 @@
+{
+  "name": "@ops-hub/db",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "echo build db",
+    "dev": "echo dev db",
+    "lint": "echo lint db"
+  }
+}

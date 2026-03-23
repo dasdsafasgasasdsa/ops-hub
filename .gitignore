@@ -1,0 +1,13 @@
+node_modules/
+.pnpm-store/
+.env
+.env.*
+var/data/*
+var/logs/*
+var/runs/*
+var/artifacts/*
+!var/data/.gitkeep
+!var/logs/.gitkeep
+!var/runs/.gitkeep
+!var/artifacts/.gitkeep
+.DS_Store

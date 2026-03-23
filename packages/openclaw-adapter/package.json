@@ -1,0 +1,11 @@
+{
+  "name": "@ops-hub/openclaw-adapter",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "echo build openclaw-adapter",
+    "dev": "echo dev openclaw-adapter",
+    "lint": "echo lint openclaw-adapter"
+  }
+}

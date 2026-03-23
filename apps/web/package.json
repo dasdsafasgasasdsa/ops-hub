@@ -1,0 +1,11 @@
+{
+  "name": "@ops-hub/web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "echo build web",
+    "dev": "echo dev web",
+    "lint": "echo lint web"
+  }
+}
