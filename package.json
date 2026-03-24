@@ -6,6 +6,7 @@
   "scripts": {
     "build": "pnpm -r build",
     "dev": "pnpm -r --parallel dev",
-    "lint": "pnpm -r lint"
+    "lint": "pnpm -r lint",
+    "test": "node --test tests/*.test.mjs"
   }
 }
