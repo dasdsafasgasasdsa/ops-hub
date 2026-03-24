@@ -1,0 +1,174 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum TaskStatus {
+  DRAFT
+  READY
+  RUNNING
+  BLOCKED
+  PAUSED
+  COMPLETED
+  FAILED
+  ARCHIVED
+}
+
+enum RunStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  FAILED
+  CANCELED
+  TIMED_OUT
+}
+
+enum Priority {
+  LOW
+  NORMAL
+  HIGH
+  CRITICAL
+}
+
+enum ApprovalDecision {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+  CANCELED
+}
+
+model Task {
+  id          String     @id @default(cuid())
+  key         String     @unique
+  title       String
+  description String?
+  status      TaskStatus @default(DRAFT)
+  priority    Priority   @default(NORMAL)
+  payload     Json?
+  readyAt     DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  runs      TaskRun[]
+  events    TaskEvent[]
+  artifacts TaskArtifact[]
+  approvals Approval[]
+
+  @@index([status, priority, readyAt, createdAt])
+  @@index([priority, createdAt])
+  @@map("tasks")
+}
+
+model TaskRun {
+  id           String    @id @default(cuid())
+  taskId       String
+  status       RunStatus @default(QUEUED)
+  attempt      Int       @default(1)
+  queuedAt     DateTime  @default(now())
+  startedAt    DateTime?
+  finishedAt   DateTime?
+  workerId     String?
+  errorMessage String?
+  output       Json?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  task      Task           @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  events    TaskEvent[]
+  artifacts TaskArtifact[]
+  approvals Approval[]
+
+  @@index([status, queuedAt, createdAt])
+  @@index([taskId, createdAt])
+  @@index([taskId, status, createdAt])
+  @@map("task_runs")
+}
+
+model TaskEvent {
+  id        String   @id @default(cuid())
+  taskId    String
+  runId     String?
+  eventType String
+  message   String?
+  payload   Json?
+  createdAt DateTime @default(now())
+
+  task Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  run  TaskRun? @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([taskId, createdAt])
+  @@index([runId, createdAt])
+  @@map("task_events")
+}
+
+model TaskArtifact {
+  id        String   @id @default(cuid())
+  taskId    String
+  runId     String?
+  kind      String
+  uri       String
+  mimeType  String?
+  sizeBytes Int?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  task Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  run  TaskRun? @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([taskId, createdAt])
+  @@index([runId, createdAt])
+  @@map("task_artifacts")
+}
+
+model Approval {
+  id          String           @id @default(cuid())
+  taskId      String
+  runId       String?
+  requestedBy String?
+  requestedAt DateTime         @default(now())
+  decision    ApprovalDecision @default(PENDING)
+  decidedBy   String?
+  decidedAt   DateTime?
+  reason      String?
+  expiresAt   DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  task Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  run  TaskRun? @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([taskId, requestedAt])
+  @@index([runId, requestedAt])
+  @@index([decision, requestedAt])
+  @@map("approvals")
+}
+
+model ExecutionLock {
+  id         String    @id @default(cuid())
+  name       String    @unique
+  owner      String
+  acquiredAt DateTime  @default(now())
+  expiresAt  DateTime
+  releasedAt DateTime?
+  metadata   Json?
+
+  @@index([expiresAt])
+  @@index([releasedAt, expiresAt])
+  @@map("execution_locks")
+}
+
+model Setting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       Json?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("settings")
+}
