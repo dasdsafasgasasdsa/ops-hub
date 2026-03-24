@@ -4,8 +4,19 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "build": "echo build api",
-    "dev": "echo dev api",
-    "lint": "echo lint api"
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "lint": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "fastify": "^5.6.1",
+    "pino": "^9.9.5",
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
   }
 }
